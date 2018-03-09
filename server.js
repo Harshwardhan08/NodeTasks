@@ -25,11 +25,10 @@ router.route('/user')
         user.Email = req.body.email;
         user.Name = req.body.name;   
         user.save(function(err, result) {
-            console.log(result);
             if (err)
                 res.json({status:'error', message : 'err message'});
-            else
-                res.json({status:'ok', data:result._id});
+
+            res.json({status:'ok', data : result._id});
         });
 
     })
@@ -37,14 +36,49 @@ router.route('/user')
         User.find(function(err,users) {
             if(err)
                 res.send(err);
-            else
+
             res.json(users);
         });
     });
+router.route('/user/:userid')
+    .get(function(req,res){
+        User.findById(req.params.userid,function(err,user){
+            if(err)
+                res.json({status : 'error' ,message : 'err message'});
+
+            res.json({status : 'ok' , data : user});
+        });
+    })
+    .put(function(req,res){
+        User.findById(req.params.userid,function(err,user){
+            if(err)
+                res.json({status :  'error' ,message : 'err message'});
+
+            user.Email = req.body.email;
+            user.Name = req.body.name;
+            user.Username = req.body.uname;
+            user.save(function(err,result){
+                if (err)
+                    res.json({status:'error', message : 'err message'});
+
+                res.json({status:'ok', data : result._id});
+            });
+        });
+    })
+    .delete(function(req, res) {
+        User.remove({
+            _id: req.params.userid
+        }, function(err, user) {
+            if (err)
+                res.json({status:'error', message : 'err message'});
+
+            res.json({status:'ok', data : null});
+        });
+    });
     
-router.get('/', function(req, res) {
+    router.get('/', function(req, res) {
     res.json({ message: 'get' });   
-});
+    });
 
 
 
